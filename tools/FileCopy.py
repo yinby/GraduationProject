@@ -1,8 +1,11 @@
+#-*- coding: utf-8 -*-
+
 import os
 import shutil
 
-src = "D:/Mywork/20170411/lry/liuruyu20160619/TY-20150609-刘敏--甲状腺乳头状癌经典型"
-tag = "D:/Mywork/data/bad"
+src = "D:/Mywork/20170411/lry"
+tag = "D:/Mywork/data/bad1"
+val = []
 total = len(os.listdir(tag))
 
 def copyFile(dir):
@@ -14,14 +17,25 @@ def copyFile(dir):
 		print("-- "+nowFile)
 		if (os.path.isfile(nowFile)):
 			print("FILE!")
-			if(dir==src):
+			if(dir in val):
 				continue
 			shutil.copy(nowFile, os.path.join(tag,str(total)+".jpg"))
 			total+=1
+
 		elif (os.path.isdir(nowFile)):
 			print("DIR!")
 			copyFile(nowFile)
 		else:
 			print("DK!")
-
-copyFile(src)
+if __name__ == '__main__':
+	for filename in os.listdir(src):
+		nowFile = os. path.join(src,filename)
+		if os.path.isdir(nowFile) and (filename[0]!='g'):
+			for subFile in os.listdir(nowFile):
+				if "癌" in subFile:
+					truePath = os.path.join(nowFile,subFile)
+					val.append(truePath)
+					copyFile(truePath)
+	# for x in src:
+	# 	copyFile(x)
+	# 	print(total)
