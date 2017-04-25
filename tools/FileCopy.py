@@ -4,7 +4,7 @@ import os
 import shutil
 
 src = "D:/Mywork/20170411/lry"
-tag = "D:/Mywork/data/bad1"
+tag = "D:/Mywork/data/bad"
 val = []
 total = len(os.listdir(tag))
 
@@ -29,7 +29,7 @@ def copyFile(dir):
 			print("DK!")
 if __name__ == '__main__':
 	for filename in os.listdir(src):
-		nowFile = os. path.join(src,filename)
+		nowFile = os.path.join(src,filename)
 		if os.path.isdir(nowFile) and (filename[0]!='g'):
 			for subFile in os.listdir(nowFile):
 				if "癌" in subFile:
