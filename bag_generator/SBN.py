@@ -1,13 +1,17 @@
 import cv2
 import os
 import shutil
+import sys
+sys.path.append("..")
+from tools import SaveAndLoad as save
 
-SRC="D:/Mywork/data/bad_nosymbol"
-TAG="D:/Mywork/data/bad_new"
+SRC_GOOD="D:/Mywork/data/good_nosymbol"
+SRC_BAD="D:/Mywork/data/bad_nosymbol"
+TAG="D:/Mywork/data/"
 INSTANCE_UPPER_BOUND = 200
-ROW_LIMIT = 20
-COL_LIMIT = 20
-DIRECTION = ((0,0),(-2,0),(2,0),(0,2),(0,-2))
+ROW_LIMIT = 10
+COL_LIMIT = 10
+DIRECTION = ((-2,0),(2,0),(0,2),(0,-2))
 FOUR = ((0,0),(0,1),(1,1),(1,0))
 
 def averengeOfFour(img,x,y):
@@ -42,6 +46,15 @@ def SBN(img):
 	for x in range(2,(realRowNumber-1)*2,2):
 		for y in range(2,(realColNumber-1)*2,2):
 			result.append([])
+			nowx = x
+			nowy = y
+			Value = 0;
+			for i in FOUR:
+				newx = nowx + i[0]
+				newy = nowy + i[1]
+				Value += img[newx][newy][0]
+			Value /= 4
+			result[len(result)-1].append(Value)
 			for z in DIRECTION:
 				nowx = x + z[0]
 				nowy = y + z[1]
@@ -51,16 +64,26 @@ def SBN(img):
 					newy = nowy + i[1]
 					nowValue += img[newx][newy][0]
 				nowValue /= 4
-				result[len(result)-1].append(nowValue)
+				result[len(result)-1].append(nowValue-Value)
 	return result
 
 if __name__ == '__main__':
-	for filename in os.listdir(SRC):
-		img = cv2.imread(os.path.join(SRC,filename))
-		cv2.imshow("0",img)
+	record = []
+	for filename in os.listdir(SRC_GOOD):
+		img = cv2.imread(os.path.join(SRC_GOOD,filename))
 		img = resize(img)
 		result = SBN(img)
-		print(result)
-		cv2.imshow("1",img)
-		cv2.waitKey(0)
-		break
+		record.append({"data":result,"type":1})
+	for filename in os.listdir(SRC_BAD):
+		img = cv2.imread(os.path.join(SRC_BAD,filename))
+		img = resize(img)
+		result = SBN(img)
+		record.append({"data":result,"type":0})
+	save.save(TAG+"in.txt",[record])
+		# cv2.imshow("0",img)
+		# img = resize(img)
+		# result = SBN(img)
+		# print(result)
+		# cv2.imshow("1",img)
+		# cv2.waitKey(0)
+		# break
